@@ -61,8 +61,13 @@ function do_step(data, i) {
     }, step.delay);
 }
 function read_data(text) {
-    var data = JSON.parse(text);
-    do_step(data, 0);
+    try {
+        var data = JSON.parse(text);
+        do_step(data, 0);
+    }
+    catch(x) {
+        console.log('bad json');
+    }
 }
 
 d3.select('#paste').on('keyup', function() {
