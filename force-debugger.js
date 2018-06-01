@@ -1,24 +1,62 @@
 var view = d3.select('#view');
 
-const FADEIN=250, PADDING=20;
+const FADEIN=250, MOVE=250, PADDING=20;
+var _nodes = {};
+function edged(e) {
+    return 'M' + _nodes[e.source].x + ',' + _nodes[e.source].y + ' L' + _nodes[e.target].x + ',' + _nodes[e.target].y;
+}
+
 function do_step(data, i) {
     if(i >= data.length)
         return;
     var step = data[i];
-    var bounds = step.nodes.reduce(
-    var node = view.selectAll('circle.node').data(graph.nodes, n=>n.id);
-    node.enter().append('circle')
+
+    var bounds = step.nodes.reduce(function(bounds, n) {
+        if(!bounds)
+            return {left: n.x, top: n.y, right: n.x, bottom: n.y};
+        bounds.left = Math.min(bounds.left, n.x);
+        bounds.top = Math.min(bounds.top, n.y);
+        bounds.right = Math.max(bounds.right, n.x);
+        bounds.bottom = Math.max(bounds.bottom, n.y);
+        return bounds;
+    }, null);
+    view.attr('viewBox', [
+        bounds.left-PADDING, bounds.top-PADDING,
+        bounds.right-bounds.left+2*PADDING, bounds.bottom-bounds.top+2*PADDING
+    ].join(','));
+
+    step.nodes.forEach(function(n) {
+        _nodes[n.id] = n;
+    });
+    var node = view.selectAll('circle.node').data(step.nodes, n=>n.id);
+    var nodeEnter = node.enter().append('circle')
         .attr('cx', n=>n.x)
         .attr('cy', n=>n.y)
         .attr('fill', 'black')
         .attr('r', 5)
-        .attr('opacity', 0)
-      .transition().duration(FADEIN)
+        .attr('opacity', 0);
+    nodeEnter.append('title').text(n=>n.id);
+    nodeEnter.transition().duration(FADEIN)
         .attr('opacity', 1);
-    
+    node = nodeEnter.merge(node);
+    node.transition().duration(MOVE)
+        .attr('cx', n=>n.x)
+        .attr('cy', n=>n.y);
+
+    var edge = view.selectAll('path.edge').data(step.edges, e=>[e.source,e.target].join('->'));
+    var edgeEnter = edge.enter().append('path')
+        .attr('d', edged)
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1)
+        .attr('opacity', 0);
+    edge = edgeEnter.merge(edge);
+    edge.transition().duration(MOVE)
+        .attr('d', edged)
+        .attr('opacity', 1);
+
     d3.timeout(function() {
-        do_step(data, step+1);
-    }, data[step].delay);
+        do_step(data, i+1);
+    }, step.delay);
 }
 function read_data(text) {
     var data = JSON.parse(text);
