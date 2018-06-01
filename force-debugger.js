@@ -100,7 +100,7 @@ function do_step(data, i) {
 
     d3.timeout(function() {
         do_step(data, (i+1)%data.length);
-    }, durations[step.action]);
+    }, T);
 }
 function read_data(text) {
     try {
