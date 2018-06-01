@@ -65,7 +65,7 @@ function do_step(data, i) {
         .attr('d', edged);
 
     d3.timeout(function() {
-        do_step(data, i+1);
+        do_step(data, (i+1)%data.length);
     }, durations[step.type]);
 }
 function read_data(text) {
