@@ -4,7 +4,7 @@ var view = d3.select('#view')
     .attr('height', content.node().getBoundingClientRect().height);
 
 const FADEIN=.25, HOLD=.5, FADEOUT=.2, MOVE=.25;
-const PADDING=20, FMAG=1000;
+const PADDING=20, FMAG=100;
 const durations = {
     init: 1000,
     force: 10000
