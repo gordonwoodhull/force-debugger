@@ -9,7 +9,10 @@ const durations = {
     init: 2000,
     force: 10000
 };
-var _nodes = {};
+var _bounds, _nodes = {}, _edges = {};
+function edge_key(e) {
+    return [e.source,e.target].join('->');
+}
 function edged(e) {
     return 'M' + _nodes[e.source].x + ',' + _nodes[e.source].y + ' L' + _nodes[e.target].x + ',' + _nodes[e.target].y;
 }
@@ -25,19 +28,21 @@ function do_step(data, i) {
     step.nodes.forEach(function(n) {
         _nodes[n.id] = n;
     });
-    var bounds = Object.keys(_nodes).reduce(function(bounds, k) {
-        var n = _nodes[k];
-        if(!bounds)
-            return {left: n.x, top: n.y, right: n.x, bottom: n.y};
-        bounds.left = Math.min(bounds.left, n.x);
-        bounds.top = Math.min(bounds.top, n.y);
-        bounds.right = Math.max(bounds.right, n.x);
-        bounds.bottom = Math.max(bounds.bottom, n.y);
-        return bounds;
+    step.edges.forEach(function(e) {
+        _edges[edge_key(e)] = e;
+    });
+    Object.keys(_nodes).forEach(function(nk) {
+        var n = _nodes[nk];
+        if(!_bounds)
+            _bounds = {left: n.x, top: n.y, right: n.x, bottom: n.y};
+        _bounds.left = Math.min(_bounds.left, n.x);
+        _bounds.top = Math.min(_bounds.top, n.y);
+        _bounds.right = Math.max(_bounds.right, n.x);
+        _bounds.bottom = Math.max(_bounds.bottom, n.y);
     }, null);
     view.attr('viewBox', [
-        bounds.left-PADDING, bounds.top-PADDING,
-        bounds.right-bounds.left+2*PADDING, bounds.bottom-bounds.top+2*PADDING
+        _bounds.left-PADDING, _bounds.top-PADDING,
+        _bounds.right-_bounds.left+2*PADDING, _bounds.bottom-_bounds.top+2*PADDING
     ].join(','));
 
     var node = view.selectAll('circle.node').data(step.nodes, n=>n.id);
@@ -56,7 +61,7 @@ function do_step(data, i) {
         .attr('cx', n=>n.x)
         .attr('cy', n=>n.y);
 
-    var edge = view.selectAll('path.edge').data(step.edges, e=>[e.source,e.target].join('->'));
+    var edge = view.selectAll('path.edge').data(Object.keys(_edges).map(ek => _edges[ek]), edge_key);
     var edgeEnter = edge.enter().append('path')
         .attr('class', 'edge')
         .attr('d', edged)
