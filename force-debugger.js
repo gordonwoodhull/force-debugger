@@ -14,7 +14,7 @@ function edged(e) {
 function do_step(data, i) {
     if(i >= data.length)
         return;
-    var step = data[i], T = durations[step.type];
+    var step = data[i], T = durations[step.action];
 
     step.nodes.forEach(function(n) {
         _nodes[n.id] = n;
@@ -66,7 +66,7 @@ function do_step(data, i) {
 
     d3.timeout(function() {
         do_step(data, (i+1)%data.length);
-    }, durations[step.type]);
+    }, durations[step.action]);
 }
 function read_data(text) {
     try {
