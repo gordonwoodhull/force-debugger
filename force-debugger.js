@@ -62,7 +62,7 @@ function do_step(data, i) {
         .attr('d', edged)
         .attr('stroke', 'black')
         .attr('vector-effect', 'non-scaling-stroke')
-        .attr('stroke-width', "1px")
+        .attr('stroke-width', '1px')
         .attr('opacity', 0);
     edgeEnter.transition('fade').duration(T*FADEIN)
         .attr('opacity', 1);
