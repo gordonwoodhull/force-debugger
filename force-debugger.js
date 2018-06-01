@@ -25,6 +25,12 @@ function do_step(data, i) {
         return;
     var step = data[i], T = durations[step.action];
 
+    var seen = {};
+    step.nodes = step.nodes.filter(function(n) {
+        var keep = !seen[n.id];
+        seen[n.id] = true;
+        return keep;
+    });
     step.nodes.forEach(function(n) {
         _nodes[n.id] = n;
     });
