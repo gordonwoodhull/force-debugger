@@ -48,7 +48,8 @@ function do_step(data, i) {
     var edgeEnter = edge.enter().append('path')
         .attr('d', edged)
         .attr('stroke', 'black')
-        .attr('stroke-width', 1)
+        .attr('vector-effect', 'non-scaling-stroke')
+        .attr('stroke-width', "1px")
         .attr('opacity', 0);
     edge = edgeEnter.merge(edge);
     edge.transition().duration(MOVE)
