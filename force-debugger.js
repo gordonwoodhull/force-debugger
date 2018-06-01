@@ -9,7 +9,8 @@ const durations = {
     init: 2000,
     force: 10000
 };
-var _bounds, _nodes = {}, _edges = {};
+var _bounds, _nodes, _edges;
+var _running;
 function edge_key(e) {
     return [e.source,e.target].join('->');
 }
@@ -99,19 +100,30 @@ function do_step(data, i) {
         .remove();
 
     d3.timeout(function() {
-        do_step(data, (i+1)%data.length);
+        if(_running === data)
+            do_step(data, (i+1)%data.length);
+        else if(_running)
+            do_step(_running, 0);
     }, T);
 }
 function read_data(text) {
+    d3.selectAll('circle.node').remove();
+    d3.selectAll('path.edge').remove();
+    d3.selectAll('path.force').remove();
+    _bounds = null; _nodes = {}; _edges = {};
+    var data;
     try {
-        var data = JSON.parse(text);
-        do_step(data, 0);
+        data = JSON.parse(text);
     }
     catch(x) {
         console.log('bad json');
     }
+    var start = !_running;
+    _running = data;
+    if(start && data)
+        do_step(data, 0);
 }
 
-d3.select('#paste').on('keyup', function() {
+d3.select('#paste').on('input', function() {
     read_data(this.value);
 });
