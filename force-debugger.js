@@ -13,6 +13,9 @@ var _nodes = {};
 function edged(e) {
     return 'M' + _nodes[e.source].x + ',' + _nodes[e.source].y + ' L' + _nodes[e.target].x + ',' + _nodes[e.target].y;
 }
+function forced(n) {
+    return 'M' + n.x + ',' + n.y + ' L' + (n.x + n.force.x*FMAG) + ',' + (n.y + n.force.y*FMAG);
+}
 
 function do_step(data, i) {
     if(i >= data.length)
@@ -66,6 +69,23 @@ function do_step(data, i) {
     edge = edgeEnter.merge(edge);
     edge.transition('move').duration(T*MOVE)
         .attr('d', edged);
+
+    var force = view.selectAll('path.force').data(step.nodes.filter(n => n.force), n => n.id);
+    var forceEnter = force.enter().append('path')
+        .attr('class', 'force')
+        .attr('d', forced)
+        .attr('stroke', '#fa2')
+        .attr('vector-effect', 'non-scaling-stroke')
+        .attr('stroke-width', '2px')
+        .attr('marker-end', 'url(#vee)')
+        .attr('opacity', 0);
+    force = forceEnter.merge(force);
+    force.transition('fade').duration(T*FADEIN)
+        .attr('opacity', 1)
+        .delay(T*HOLD)
+        .transition('fadeout').duration(T*FADEOUT)
+        .attr('opacity', 0)
+        .remove();
 
     d3.timeout(function() {
         do_step(data, (i+1)%data.length);

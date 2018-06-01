@@ -18,7 +18,14 @@
       <textarea id=paste cols=80></textarea>
     </div>
     <div id=content>
-      <svg id=view></svg>
+      <svg id=view>
+        <defs>
+          <marker id="vee" viewBox="0 -5 10 10" refX="10" refY="0" markerUnits="userSpaceOnUse"
+                  markerWidth="3" markerHeight="3" orient="auto">
+            <path d="M0,-5 L10,0 L0,5 L3,0" stroke-width="0px" fill="#fa2"></path>
+          </marker>
+        </defs>
+      </svg>
     </div>
   </div>
 
