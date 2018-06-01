@@ -85,10 +85,10 @@ function do_step(data, i) {
     var forceEnter = force.enter().append('path')
         .attr('class', 'force')
         .attr('d', forced)
-        .attr('stroke', '#fa2')
+        .attr('stroke', n => n.force.kind === 'adjacent' ? '#fa2' : '#2cc')
         .attr('vector-effect', 'non-scaling-stroke')
         .attr('stroke-width', '2px')
-        .attr('marker-end', 'url(#vee)')
+        .attr('marker-end', n => n.force.kind === 'adjacent' ? 'url(#adjvee)' : 'url(#cenvee)')
         .attr('opacity', 0);
     force = forceEnter.merge(force);
     force.transition('fade').duration(T*FADEIN)
