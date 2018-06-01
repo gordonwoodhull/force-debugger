@@ -31,6 +31,7 @@ function do_step(data, i) {
 
     var node = view.selectAll('circle.node').data(step.nodes, n=>n.id);
     var nodeEnter = node.enter().append('circle')
+        .attr('class', 'node')
         .attr('cx', n=>n.x)
         .attr('cy', n=>n.y)
         .attr('fill', 'black')
@@ -47,6 +48,7 @@ function do_step(data, i) {
     var edge = view.selectAll('path.edge').data(step.edges, e=>[e.source,e.target].join('->'));
     var edgeEnter = edge.enter().append('path')
         .attr('d', edged)
+        .attr('class', 'edge')
         .attr('stroke', 'black')
         .attr('vector-effect', 'non-scaling-stroke')
         .attr('stroke-width', "1px")
