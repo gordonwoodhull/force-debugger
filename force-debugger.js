@@ -11,7 +11,11 @@ function do_step(data, i) {
         return;
     var step = data[i];
 
-    var bounds = step.nodes.reduce(function(bounds, n) {
+    step.nodes.forEach(function(n) {
+        _nodes[n.id] = n;
+    });
+    var bounds = Object.keys(_nodes).reduce(function(bounds, k) {
+        var n = _nodes[k];
         if(!bounds)
             return {left: n.x, top: n.y, right: n.x, bottom: n.y};
         bounds.left = Math.min(bounds.left, n.x);
@@ -25,9 +29,6 @@ function do_step(data, i) {
         bounds.right-bounds.left+2*PADDING, bounds.bottom-bounds.top+2*PADDING
     ].join(','));
 
-    step.nodes.forEach(function(n) {
-        _nodes[n.id] = n;
-    });
     var node = view.selectAll('circle.node').data(step.nodes, n=>n.id);
     var nodeEnter = node.enter().append('circle')
         .attr('cx', n=>n.x)
