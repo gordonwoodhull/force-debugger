@@ -38,7 +38,7 @@ function do_step(data, i) {
         .attr('r', 5)
         .attr('opacity', 0);
     nodeEnter.append('title').text(n=>n.id);
-    nodeEnter.transition().duration(FADEIN)
+    nodeEnter.transition('fade').duration(FADEIN)
         .attr('opacity', 1);
     node = nodeEnter.merge(node);
     node.transition().duration(MOVE)
@@ -47,16 +47,17 @@ function do_step(data, i) {
 
     var edge = view.selectAll('path.edge').data(step.edges, e=>[e.source,e.target].join('->'));
     var edgeEnter = edge.enter().append('path')
-        .attr('d', edged)
         .attr('class', 'edge')
+        .attr('d', edged)
         .attr('stroke', 'black')
         .attr('vector-effect', 'non-scaling-stroke')
         .attr('stroke-width', "1px")
         .attr('opacity', 0);
-    edge = edgeEnter.merge(edge);
-    edge.transition().duration(MOVE)
-        .attr('d', edged)
+    edgeEnter.transition('fade').duration(FADEIN)
         .attr('opacity', 1);
+    edge = edgeEnter.merge(edge);
+    edge.transition('move').duration(MOVE)
+        .attr('d', edged);
 
     d3.timeout(function() {
         do_step(data, i+1);
