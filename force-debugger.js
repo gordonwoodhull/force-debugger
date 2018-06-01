@@ -1,4 +1,7 @@
-var view = d3.select('#view');
+var content = d3.select('#content');
+var view = d3.select('#view')
+    .attr('width', content.node().getBoundingClientRect().width)
+    .attr('height', content.node().getBoundingClientRect().height);
 
 const FADEIN=.25, HOLD=.5, FADEOUT=.2, MOVE=.25;
 const PADDING=20, FMAG=1000;
